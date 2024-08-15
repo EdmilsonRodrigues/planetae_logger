@@ -2,19 +2,21 @@ from datetime import datetime
 from typing import Any
 
 
-class LoggerDecorator:
+class _LoggerDecorator:
     def __init__(self, function) -> None:
         self.function = function
 
     def __call__(self, *args, **kwargs) -> None:
         try:
+            print(args, kwargs)
             result = self.function(*args, **kwargs)
-            self._log_output(result, kwargs["standard_output"])
+            self._log_output(result, filename="log.txt")
         except Exception as e:
-            self._log_output(e, kwargs["exceptions_output"])
+            self._log_output(e, filename="crash_log.txt")
             raise
 
-    def _log_output(self, output: Any, filename: str) -> None:
+    @staticmethod
+    def _log_output(output: Any, filename: str) -> None:
         with open(filename, "a") as log_file:
             log_file.write(str(output) + " " + datetime.now().isoformat() + " " + "\n")
 
@@ -27,43 +29,49 @@ class Logger:
         self.standard_output = standard_output
         self.exceptions_output = exceptions_output
 
-    @LoggerDecorator
-    def log_exception(self, exception: Exception) -> None:
+    @staticmethod
+    @_LoggerDecorator
+    def log_exception(exception: Exception) -> None:
         raise exception
 
-    @LoggerDecorator
-    def log_string(self, string: str) -> str:
+    @staticmethod
+    @_LoggerDecorator
+    def log_string(string: str) -> str:
         return string
 
-    @LoggerDecorator
-    def log_iterable(self, iterable: list | tuple, name: str = "Array") -> str:
+    @staticmethod
+    @_LoggerDecorator
+    def log_iterable(iterable: list | tuple, name: str = "Array") -> str:
         string = name + ":\n"
         for i in iterable:
             string += "\t" + str(i)
         return string + "\n"
 
-    @LoggerDecorator
-    def log_dict(self, json: dict, name: str = "json") -> str:
-        def pprint_json(json: dict | list) -> str:
-            if isinstance(json, dict):
-                string = "{\n"
-                for key, value in json:
+    @staticmethod
+    @_LoggerDecorator
+    def log_dict(json: dict, name: str = "json") -> str:
+        def pprint_json(dictionary: dict | list) -> str:
+            pprint_string = ""
+            if isinstance(dictionary, dict):
+                pprint_string = "{\n"
+                for key, value in dictionary:
                     if not isinstance(value, dict):
-                        string += f"\t{key}: {value}\n"
+                        pprint_string += f"\t{key}: {value}\n"
                     else:
-                        string += f"\t{key}: {pprint_json(value)}\n"
-                string += "}"
-            elif isinstance(json, list):
-                string = "[\n"
-                for i in json:
-                    string += f"\t{i},\n"
-                string = "]"
-            return string
+                        pprint_string += f"\t{key}: {pprint_json(value)}\n"
+                pprint_string += "}"
+            elif isinstance(dictionary, list):
+                pprint_string = "[\n"
+                for i in dictionary:
+                    pprint_string += f"\t{i},\n"
+                pprint_string = "]"
+            return pprint_string
 
         string = name + ":\n"
-        string += pprint_json(json=json)
+        string += pprint_json(dictionary=json)
         return string
 
-    @LoggerDecorator
-    def log_object(self, obj: object) -> str:
+    @staticmethod
+    @_LoggerDecorator
+    def log_object(obj: object) -> str:
         return str(obj)
