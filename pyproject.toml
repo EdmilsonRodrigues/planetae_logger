@@ -22,6 +22,6 @@ classifiers = [
 [project.urls]
 repository = "https://github.com/EdmilsonRodrigues/planetae_logger"
 
-[tool.flit.metadata]
-module = "logger"
+[tool.flit.module]
+name = "logger"
 
