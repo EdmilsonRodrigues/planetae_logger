@@ -1,1 +1,27 @@
-[tool.black
+[build-system]
+requires = ["flit_core>=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "planetae_logger"
+version = "0.5.0"
+description = "A single-module Python logger for simple applications"
+authors = [
+    {name = "Edmilson Monteiro Rodrigues Neto", email="edmilson.rodriguesn38@gmail.com"},
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.7"
+keywords = ["logger", "logging", "log"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: System :: Logging"
+]
+
+[project.urls]
+repository = "https://github.com/EdmilsonRodrigues/planetae_logger"
+
+[tool.flit.metadata]
+module = "logger"
+

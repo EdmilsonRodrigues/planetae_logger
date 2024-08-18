@@ -1,2 +1,0 @@
-Logger.log_string() missing 1 required positional argument: 'string' 2024-08-15T19:44:36.489647 
-Logger.log_string() missing 1 required positional argument: 'string' 2024-08-15T19:45:00.573623 

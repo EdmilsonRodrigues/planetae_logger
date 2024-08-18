@@ -8,19 +8,19 @@ class _LoggerDecorator:
 
     def __call__(self, *args, **kwargs) -> Any:
         instance = self.cls(*args, **kwargs)
-        for method in instance:
+        for method in self.cls.__dict__:
             if callable(getattr(self.cls, method)):
-                self.cls.__dict__[method] = self._decorate(getattr(self.cls, method), standard_output=instance.response_output, exception_output=instance.response_output)
-        return
+                instance.__dict__[method] = self._decorate(getattr(self.cls, method), instance=instance, standard_output=instance.standard_output, exception_output=instance.exceptions_output)
+        return instance
 
-    def _decorate(self, func: Any, standard_output: str, exception_output: str) -> Any:
+    def _decorate(self, func: Any, instance, standard_output: str, exception_output: str) -> Any:
         def wrapper(*args, **kwargs) -> Any:
             try:
-                result = func(*args, **kwargs)
+                result = func(instance, *args, **kwargs)
                 self._log_output(result, filename=standard_output)
                 return result
             except Exception as e:
-                self._log_output(result, filename=exception_output)
+                self._log_output(e, filename=exception_output)
 
         return wrapper
 
